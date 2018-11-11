@@ -1,0 +1,15 @@
+{
+  "name": "qubinator-cli",
+  "version": "0.0.1",
+  "description": "Qubinator cli for javascript and npm",
+  "main": "cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "qubinator",
+    "cli"
+  ],
+  "author": "Jean Lourenço",
+  "license": "MIT"
+}
