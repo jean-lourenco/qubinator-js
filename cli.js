@@ -11,36 +11,36 @@ class QuberMatrix {
 
     wordToRow(offset) {
         for (let i = 0; i < this.len; i++) {
-            this.mtx[offset.y][i + offset.x] = this.word[i];
+            this.mtx[offset][i + offset] = this.word[i];
         }
     }
 
     wordToRowBackwards(offset) {
         for (let i = this.len; i > 0; i--) {
-            this.mtx[offset.y + this.len - 1][offset.x + i - 1] = this.word[this.len - i];
+            this.mtx[offset + this.len - 1][offset + i - 1] = this.word[this.len - i];
         }
     }
 
     wordToColumn(offset) {
         for (let i = 0; i < this.len; i++) {
-            this.mtx[i + offset.y][offset.x] = this.word[i];
+            this.mtx[i + offset][offset] = this.word[i];
         }
     }
 
     wordToColumnBackwards(offset) {
         for (let i = this.len; i > 0; i--) {
-            this.mtx[i + offset.y - 1][offset.x + this.len - 1] = this.word[this.len - i];
+            this.mtx[i + offset - 1][offset + this.len - 1] = this.word[this.len - i];
         }
     }
 
     writeHalfBoard(offset = 0) {
-        this.wordToRow(new Point(offset, offset));
-        this.wordToColumn(new Point(offset, offset));
+        this.wordToRow(offset);
+        this.wordToColumn(offset);
     }
 
     writeHalfBoardBackwards(offset = 0) {
-        this.wordToRowBackwards(new Point(offset, offset));
-        this.wordToColumnBackwards(new Point(offset, offset));
+        this.wordToRowBackwards(offset);
+        this.wordToColumnBackwards(offset);
     }
 
     writeFullBoard(offset = 0) {
@@ -48,10 +48,9 @@ class QuberMatrix {
         this.writeHalfBoardBackwards(offset);
     }
 
-    drawMultiple(letter, point, times) {
+    drawMultiple(letter, x, y, times) {
         for (let i = 0; i < times; i++) {
-            this.mtx[point.y][point.x] = letter;
-            point = point.increment(1, 1);
+            this.mtx[y++][x++] = letter;
         }
     }
 
@@ -72,34 +71,21 @@ class QuberMatrix {
     }
 }
 
-class Point {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    increment(iX, iY) {
-        return new Point(this.x + iX, this.y + iY);
-    }
-}
+const err_msg = 'A palavra deve no mínimo três caracteres';
 
 class Quber {
     static to2dSimple(word) {
-        var result = this.inputIsValid(word);
-        if (!result.success)
-            return result;
+        if (!word || word.length < 3)
+            return err_msg;
 
         let mtx = new QuberMatrix(word);
-
         mtx.writeHalfBoard();
-
         return mtx.materialize();
     }
 
     static to2dFull(word) {
-        var result = this.inputIsValid(word);
-        if (!result.success)
-            return result;
+        if (!word || word.length < 3)
+            return err_msg;
 
         let mtx = new QuberMatrix(word);
         mtx.writeFullBoard();
@@ -107,9 +93,8 @@ class Quber {
     }
 
     static to3d(word) {
-        var result = this.inputIsValid(word);
-        if (!result.success)
-            return result;
+        if (!word || word.length < 3)
+            return err_msg;
 
         let mtx = new QuberMatrix(word);
         let rawOffset = Math.floor(mtx.len/2);
@@ -118,27 +103,11 @@ class Quber {
         mtx.writeFullBoard();
         mtx.writeFullBoard(offset);
 
-        mtx.drawMultiple('\\', new Point(1, 1), offset - 1);
-        mtx.drawMultiple('\\', new Point(1, mtx.len), offset - 1);
-        mtx.drawMultiple('\\', new Point(mtx.len, 1), offset - 1);
-        mtx.drawMultiple('\\', new Point(mtx.len, mtx.len), offset - 1);
+        mtx.drawMultiple('\\', 1, 1, offset - 1);
+        mtx.drawMultiple('\\', 1, mtx.len, offset - 1);
+        mtx.drawMultiple('\\', mtx.len, 1, offset - 1);
+        mtx.drawMultiple('\\', mtx.len, mtx.len, offset - 1);
 
         return mtx.materialize();
-    }
-
-    static inputIsValid(word) {
-        if (!word)
-            return {
-                success: false, 
-                reason: 'Alguma palavra deve ser informada'
-            }
-
-        if (word.length < 3)
-            return {
-                success: false, 
-                reason: 'A palavra deve no mínimo três caracteres'
-            }
-
-        return {success: true, reason: null}
     }
 }
